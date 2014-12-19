@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Consolas", "Lucida Console", monospace;
+            color: white;
+            background: black;
+        }
+
+        pre#source {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<pre id="output"></pre>
+<pre id="source">
+PHPUnit 4.1.12 by Sebastian Bergmann.
+
+Configuration read from /phpunit.xml
+
+.............................................................   61 / 1189 (  5%)
+.............................................................  122 / 1189 ( 10%)
+.............................................................  183 / 1189 ( 15%)
+.............................................................  244 / 1189 ( 20%)
+.............................................................  305 / 1189 ( 25%)
+.............................................................  366 / 1189 ( 30%)
+.............................................................  427 / 1189 ( 35%)
+.............................................................  488 / 1189 ( 41%)
+.............................................................  549 / 1189 ( 46%)
+...................................................I.........  610 / 1189 ( 51%)
+.............................................................  671 / 1189 ( 56%)
+.............................................................  732 / 1189 ( 61%)
+.............................................................  793 / 1189 ( 66%)
+.............................................................  854 / 1189 ( 71%)
+.............................................................  915 / 1189 ( 76%)
+.............................................................  976 / 1189 ( 82%)
+............................................................. 1037 / 1189 ( 87%)
+............................................................. 1098 / 1189 ( 92%)
+............................................................. 1159 / 1189 ( 97%)
+..............................
+
+Time: 34.98 seconds, Memory: 35.75Mb
+
+There was 1 incomplete test:
+</pre>
+
+<script>
+    var l = 61, s = 0, t = 0, i = 0, c = 0;
+    var source = document.querySelector('#source');
+    var output = document.querySelector('#output');
+    var timeout = undefined;
+    var interval = undefined;
+
+    function rand(multipler, decimal) {
+        var r = Math.random() * (multipler > 0 ? multipler : 10);
+        if (decimal) {
+            return r;
+        }
+
+        return Math.round(r);
+    }
+
+    function ctrlC() {
+        document.addEventListener('keydown', function(e) {
+            if(!e.ctrlKey || e.keyCode != 67) {
+                return;
+            }
+
+            if(interval) {
+                clearInterval(interval);
+            }
+
+            if(timeout) {
+                clearTimeout(timeout)
+            }
+
+            output.innerHTML += '^C\n';
+        });
+    }
+
+    function pad(v, l) {
+        return ('               ' + v).slice(l * -1);
+    }
+
+    function counter() {
+        interval = setInterval(
+            function () {
+                c+=0.01;
+            },
+            10
+        );
+    }
+
+    function runSuite() {
+        s++;
+        i = 1;
+        t = rand(10000);
+
+        output.innerHTML += 'PHPUnit 4.1.12 by Sebastian Bergmann.\n\nConfiguration read from /phpunit.xml\n\n';
+        counter();
+        runTest();
+    }
+
+    function runTest() {
+        var r = rand(1000);
+
+        if (r > 999) {
+            output.innerHTML += '<span style="color: red">F</span>';
+        } else if (r > 998) {
+            output.innerHTML += '<span style="color: yellow">I</span>';
+        } else if (r > 997) {
+            output.innerHTML += '<span style="color: yellow">S</span>';
+        } else {
+            output.innerHTML += '.';
+        }
+
+        if (i != 0 && i % l == 0) {
+            output.innerHTML += pad(i, t.toString().length + 1) + ' / ' + t + ' (' + pad(Math.round(i * 100 / t), 3) + '%)\n';
+        }
+
+        i++;
+        if (i < t) {
+            setTimeout(runTest, rand(1000));
+        } else {
+            clearInterval(interval);
+            output.innerHTML += '\n\nTime: ' + c.toFixed(2) + ' seconds, Memory: ' + rand(100) + 'Mb\n\n\n';
+
+            timeout = setTimeout(runSuite, 100);
+        }
+
+        window.scrollTo(0,document.body.scrollHeight);
+    }
+
+    ctrlC();
+    runSuite();
+</script>
+
+</body>
+</html>
