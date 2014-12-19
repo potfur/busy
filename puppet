@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Consolas", "Lucida Console", monospace;
+            color: white;
+            background: black;
+        }
+
+        pre#source {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<pre></pre>
+
+<script>
+    var data = [
+        'sha1_generic',
+        'arc4',
+        'ecb',
+        'ppp_mppe',
+        'ppp_async',
+        'crc_ccitt',
+        'ppp_generic',
+        'slhc',
+        'ext3',
+        'jbd',
+        'sha256_generic',
+        'aes_x86_64',
+        'aes_generic',
+        'cbc',
+        'nfsd',
+        'exportfs',
+        'nfs',
+        'lockd',
+        'fscache',
+        'nfs_acl',
+        'auth_rpcgss',
+        'sunrpc',
+        'fuse',
+        'dm_crypt',
+        'it87',
+        'hwmon_vid',
+        'coretemp',
+        'loop',
+        'snd_pcm',
+        'usb_storage',
+        'i915',
+        'snd_timer',
+        'drm_kms_helper',
+        'snd',
+        'ata_generic',
+        'drm',
+        'soundcore',
+        'snd_page_alloc',
+        'uhci_hcd',
+        'i2c_algo_bit',
+        'psmouse',
+        'ehci_hcd',
+        'video',
+        'i2c_i801',
+        'evdev',
+        'pata_jmicron',
+        'pcspkr',
+        'serio_raw',
+        'usbcore',
+        'i2c_core',
+        'nls_base',
+        'output',
+        'e1000e',
+        'button',
+        'processor',
+        'ext4',
+        'mbcache',
+        'jbd2',
+        'crc16',
+        'dm_mod',
+        'raid456',
+        'md_mod',
+        'async_raid6_recov',
+        'async_pq',
+        'raid6_pq',
+        'async_xor',
+        'xor',
+        'async_memcpy',
+        'async_tx',
+        'sd_mod',
+        'crc_t10dif',
+        'ahci',
+        'libata',
+        'scsi_mod',
+        'thermal',
+        'thermal_sys'
+    ];
+    var i = 0;
+    var d = 0;
+    var output = document.querySelector('pre');
+    var interval;
+    var chrashed = false;
+
+    function ctrlC() {
+        document.addEventListener('keydown', function (e) {
+            if (!e.ctrlKey || e.keyCode != 67) {
+                return;
+            }
+
+            if (interval) {
+                clearInterval(interval);
+                if(!chrashed) {
+                    crash();
+                    chrashed = true;
+                }
+            }
+
+            output.innerHTML += '^C\n';
+        });
+    }
+
+    function rand(multipler) {
+        return Math.round(Math.random() * (multipler > 0 ? multipler : 10));
+    }
+
+    function module() {
+        output.innerHTML +=
+                "\n\n\n\n" +
+                "==> default: " + data[i] + " (v2.0.14)\n" +
+                "==> default: ++ puppet module install " + data[i] + " --force\n" +
+                "==> default: Notice: Preparing to install into /etc/puppet/modules\n" +
+                "==> default: Notice: Downloading from https://forge.puppetlabs.com\n" +
+                "==> default: Notice: Installing -- do not interrupt ...";
+
+        i > data.length ? i = 0 : i++;
+
+        install();
+    }
+
+    function install() {
+        d = rand(75);
+        window.scrollTo(0, document.body.scrollHeight);
+        interval = setInterval(dots, rand(rand(10) * 10));
+    }
+
+    function dots() {
+        if (d > 0) {
+            output.innerHTML += '.';
+            d--;
+        } else {
+            e = rand(1000);
+            if (e <= 900) {
+                output.innerHTML += '<span style="color: green">[ OK ]</span>';
+                clearInterval(interval);
+                setTimeout(module, rand(10))
+            } else {
+                output.innerHTML += '<span style="color: red">[FAIL]</span> <span>\nretrying\n</span>';
+                clearInterval(interval);
+                install();
+            }
+        }
+
+    }
+
+    function crash() {
+        interval = setInterval(
+            function () {
+                output.innerHTML += String.fromCharCode(rand(255));
+            },
+            10
+        );
+    }
+
+    ctrlC();
+    module();
+
+</script>
+
+</body>
+</html>
